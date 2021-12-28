@@ -48,17 +48,22 @@ public class AppConfig {
         entityManagerFactoryBean.setDataSource(getDataSource());
         entityManagerFactoryBean.setPackagesToScan("web/model");
 
-        Properties properties = new Properties();
-        properties.setProperty("hibernate.show_sql", env.getProperty("hibernate.show_sql"));
-        properties.setProperty("hibernate.hbm2ddl", env.getProperty("hibernate.hbm2ddl"));
-        properties.setProperty("hibernate.dialect", env.getProperty("hibernate.dialect"));
-
         JpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
         entityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);
-        entityManagerFactoryBean.setJpaProperties(properties);
+        entityManagerFactoryBean.setJpaProperties(additionalProperties());
 
         return entityManagerFactoryBean;
     }
+
+    private Properties additionalProperties() {
+        Properties properties = new Properties();
+        properties.put("hibernate.show_sql", env.getRequiredProperty("hibernate.show_sql"));
+        properties.put("hibernate.hbm2ddl.auto", env.getRequiredProperty("hibernate.hbm2ddl.auto"));
+        properties.put("hibernate.dialect", env.getProperty("hibernate.dialect"));
+        return properties;
+    }
+
+
 
     @Bean
     public PlatformTransactionManager getTransactionManager() {

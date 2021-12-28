@@ -20,15 +20,13 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public List<User> allUsers() {
-        return entityManager.createQuery("select user from User user").getResultList();
+        return entityManager.createQuery("select u from User u", User.class).getResultList();
     }
     public void add(User user) {
         entityManager.persist(user);
     }
-    public void delete(User user){
-        entityManager.createQuery("delete from User user where user.id = :id")
-                .setParameter("id", user.getId())
-                .executeUpdate();
+    public void delete(long id){
+        entityManager.remove(getById(id));
     }
 
     public void edit(User user) {
@@ -38,7 +36,7 @@ public class UserDaoImpl implements UserDao {
                 .setParameter("slastName", user.getLastName())
                 .executeUpdate();
     }
-    public User getById(int id) {
+    public User getById(long id) {
         return entityManager.createQuery("select user from User user where user.id = :id", User.class)
                 .setParameter("id", id)
                 .getSingleResult();

@@ -1,6 +1,7 @@
 package web.controller;
 
 
+import jakarta.validation.Valid;
 import web.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,56 +15,56 @@ import web.service.UserService;
 import java.util.List;
 
 @Controller
+
 public class UserController {
 
-    @Autowired
-    @Qualifier(value = "userServiceImpl")
-    private UserService userService;
+    private final UserService userService;
 
-    @GetMapping("allUsers")
-    public String AllUsers(Model model) {
-        List<User> userList = userService.allUsers();
-        model.addAttribute("usersList", userList);
-        return "AllUsers";
+    @Autowired()
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
-    @GetMapping(value = "/id")
-    public String getById(@PathVariable int id, Model model) {
-        User user = userService.getById(id);
-        model.addAttribute("user", user);
-        return "getById";
+    @GetMapping("/")
+    public String allUsers(Model model) {
+        model.addAttribute("users", userService.allUsers());
+        return "allUsers";
     }
 
-    @GetMapping(value = "/new")
-    public String createNewUsersT(@ModelAttribute("user") User user) {
-        return "NewUser";
-    }
-
-    @PostMapping("/")
-    public String createNewUser(@ModelAttribute ("user") User user, BindingResult bindingResult) {
-        if(bindingResult.hasErrors()) {
-            return "NewUser";
+    @PostMapping("/new")
+    public String add(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "new";
+        } else {
+            userService.add(user);
+            return "redirect:/";
         }
-        userService.add(user);
-        return "redirect:/AllUsers";
+    }
+    @GetMapping("/new")
+    public String addUser(User user){
+        return "new";
     }
 
-    @GetMapping("/id/edit")
-    public String edit(Model model, @PathVariable int id){
-        model.addAttribute("user", userService.getById(id));
-        return "Edit";
+    @GetMapping("edit/{id}")
+    public String updateUser(@PathVariable("id") long id, Model model) {
+        model.addAttribute(userService.getById(id));
+        return "update";
     }
 
-    @PatchMapping("/id")
-    public String update(@ModelAttribute("user") User user, @PathVariable ("id") int id) {
-        userService.edit(user);
-        return "redirect:/AllUsers";
+    @PatchMapping("/edit")
+    public String update(@Valid User user, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "update";
+        } else {
+            userService.edit(user);
+            return "redirect:/";
+        }
+    }
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable("id") long id) {
+        userService.delete(id);
+        return "redirect:/";
     }
 
-    @DeleteMapping("/id")
-    public String delete(@ModelAttribute("user") User user, @PathVariable ("id") int id) {
-        userService.delete(user);
-        return "redirect:/AllUsers";
-    }
 
 }
