@@ -21,6 +21,7 @@ public class UserServiceImpl implements UserService {
     public List<User> allUsers() {
         return userDao.allUsers();
     }
+
     @Override
     public User getById(long id) {
         return userDao.getById(id);
@@ -42,6 +43,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public void delete(long id) {
         userDao.delete(id);
+    }
+
+    public User getUserByUsername(String username) {
+        return userDao.getUserByUsername(username);
     }
 
 }

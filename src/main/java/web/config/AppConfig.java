@@ -42,39 +42,35 @@ public class AppConfig {
     }
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean getEntityManagerFactoryBean() {
-        LocalContainerEntityManagerFactoryBean entityManagerFactoryBean =
-                new LocalContainerEntityManagerFactoryBean();
-        entityManagerFactoryBean.setDataSource(getDataSource());
-        entityManagerFactoryBean.setPackagesToScan("web/model");
-
-        JpaVendorAdapter jpaVendorAdapter = new HibernateJpaVendorAdapter();
-        entityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);
-        entityManagerFactoryBean.setJpaProperties(additionalProperties());
-
-        return entityManagerFactoryBean;
-    }
-
-    private Properties additionalProperties() {
-        Properties properties = new Properties();
-        properties.put("hibernate.show_sql", env.getRequiredProperty("hibernate.show_sql"));
-        properties.put("hibernate.hbm2ddl.auto", env.getRequiredProperty("hibernate.hbm2ddl.auto"));
-        properties.put("hibernate.dialect", env.getProperty("hibernate.dialect"));
-        return properties;
-    }
-
-
-
-    @Bean
-    public PlatformTransactionManager getTransactionManager() {
-        JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
-        jpaTransactionManager.setEntityManagerFactory(getEntityManagerFactoryBean().getObject());
-
-        return jpaTransactionManager;
+    public JpaTransactionManager transactionManager() {
+        JpaTransactionManager transactionManager = new JpaTransactionManager();
+        transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
+        return transactionManager;
     }
 
     @Bean
-    public PersistenceExceptionTranslationPostProcessor getPostProcessor() {
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+        LocalContainerEntityManagerFactoryBean lc
+                = new LocalContainerEntityManagerFactoryBean();
+        lc.setDataSource(getDataSource());
+        lc.setPackagesToScan("web/model");    //сканирование тех папок, где находятся энтити
+        JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+        lc.setJpaVendorAdapter(vendorAdapter);
+        lc.setJpaProperties(additionalProperties());
+        return lc;
+    }
+
+    @Bean
+    public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
         return new PersistenceExceptionTranslationPostProcessor();
+    }
+
+    Properties additionalProperties() {
+        Properties properties = new Properties();
+        properties.setProperty("hibernate.hbm2ddl.auto", "update" );
+        properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
+        properties.setProperty("hibernate.show_sql", "true");
+
+        return properties;
     }
 }
