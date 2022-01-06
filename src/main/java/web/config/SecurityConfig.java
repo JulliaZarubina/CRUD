@@ -60,20 +60,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                 .antMatchers("/", "/user")
-                //указываем что будет видно ролям Admin и User
                 .hasAnyRole("ADMIN, USER")
                 .antMatchers("/**")
                 .hasAnyRole("ADMIN")
                 .and()
-                .formLogin() // Spring сам подставит свою логин форму
-                .successHandler(successUserHandler) // подключаем наш SuccessHandler для перенаправления по ролям
-                // Handler - обработчик успешной аутентификации
+                .formLogin()
+                .successHandler(successUserHandler)
                 .permitAll()
                 .and()
                 .logout()
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login")
-                //выключаем кроссдоменную секьюрность
                 .and().csrf().disable();
     }
 }
