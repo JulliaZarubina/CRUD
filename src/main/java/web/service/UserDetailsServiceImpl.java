@@ -17,18 +17,15 @@ import web.model.User;
 @Component
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private UserService userService;
-
     @Autowired
-    public UserDetailsServiceImpl(UserService userService) {
-        this.userService = userService;
-    }
+    @Qualifier(value = "userDaoImpl")
+    private UserDaoImpl userDAO;
 
     @Override
-    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-        User user = userService.getUserByUsername(userName);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userDAO.getUserByUsername(username);
         if (user == null) {
-            throw new UsernameNotFoundException("User not find");
+            throw new UsernameNotFoundException("Could not find user");
         }
         return user;
     }
