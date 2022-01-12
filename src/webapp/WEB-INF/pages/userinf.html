@@ -1,37 +1,30 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:form="http://www.w3.org/1999/html">
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Add</title>
+    <TITLE>USER_INFO</TITLE>
 </head>
+
 <body>
-<form th:method="POST" th:action="@{/admin/new}" th:object="${user}">
-    <p>
-        <label for="username">User Name:</label>
-        <input type="text" th:field="*{username}" id="username">
-    </p>
-    <p>
-        <label for="password">Password:</label>
-        <input type="text" th:field="*{password}" id="password">
-    </p>
-    <p>
-        <label for="name">Name:</label>
-        <input type="text" th:field="*{name}" id="name">
-    </p>
-    <p>
-        <label for="email">Email:</label>
-        <input type="text" th:field="*{email}" id="email">
-    </p>
-    <p>
-        <input type="checkbox" name="nameRoles" value="ROLE_USER"/> USER
-        <input type="checkbox" name="nameRoles" value="ROLE_ADMIN"/> ADMIN
-        <input type="submit" value="OK"/>
-    </p>
+<br/>
+<form th:action="@{/logout}" method="post">
+    <input type="submit" value="Logout"/>
 </form>
-<h4>Authorization:</h4>
-<button>
-    <a th:href="@{/logout}">Logout</a>
-</button>
+<h2>User_Info</h2>
+<div>
+    <table border="1">
+        <tr>
+            <th>id</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Password</th>
+        </tr>
+        <td th:utext="${user.getId()}"></td>
+            <td th:text="${user.name}"></td>
+            <td th:text="${user.age}"></td>
+            <td th:text="${user.password}"></td>
+        </tr>
+    </table>
+</div>
 </body>
-</html>
+</html></html>

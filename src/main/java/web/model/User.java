@@ -36,7 +36,7 @@ public class User implements UserDetails {
     @Column
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @Fetch(FetchMode.JOIN)
     @JoinTable(
             name = "users_roles",
@@ -128,6 +128,15 @@ public class User implements UserDetails {
     }
 
     public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
+    public User(String name, String lastName, String email, String username, String password, Set<Role> roles) {
+        this.name = name;
+        this.lastName = lastName;
+        this.email = email;
+        this.username = username;
+        this.password = password;
         this.roles = roles;
     }
 }
